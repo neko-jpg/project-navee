@@ -1,0 +1,86 @@
+/* client/src/styles/Global.css */
+/* Google Fonts - Inter をインポート (推奨フォント) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif; /* Interフォントを使用 */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f4f7f6; /* 薄い背景色 */
+  color: #333;
+  line-height: 1.6;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center; /* コンテンツを中央寄せ */
+  padding: 20px;
+  width: 100%; /* フル幅を使用 */
+  max-width: 100vw; /* 水平スクロールを防ぐ */
+  overflow-x: hidden; /* 水平スクロールを隠す */
+}
+
+.App-header {
+  width: 100%;
+  max-width: 800px; /* 最大幅を制限 */
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #2c3e50;
+  font-size: 2.5em;
+  margin: 0;
+  font-weight: 700; /* 太めのフォント */
+}
+
+main {
+  width: 100%;
+  max-width: 800px; /* ヘッダーと合わせる */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* コンポーネント間のスペース */
+  align-items: center; /* コンテンツを中央寄せ */
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8em;
+  }
+  main, .App-header {
+    padding: 15px;
+    margin: 10px auto; /* 中央寄せ */
+  }
+  #root {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5em;
+  }
+  main, .App-header {
+    padding: 10px;
+    margin: 5px auto;
+  }
+  .route-selector-container {
+    padding: 15px;
+  }
+  input, select, button {
+    font-size: 0.9em !important;
+    padding: 8px !important;
+  }
+}
