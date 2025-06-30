@@ -56,6 +56,7 @@ function VehicleTypeSelector({ selectedType, onTypeChange }) {
               </div>
               <div className="selection-indicator">
                 {selectedType === vehicle.id && <div className="check-mark">✓</div>}
+                }
               </div>
             </div>
           );
