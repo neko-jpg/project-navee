@@ -2,11 +2,15 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { getDirections } from '../utils/api';
 import { dangerZones } from '../data/danger-zones';
+import RouteInsights from './RouteInsights';
 
 function MapDisplay({ searchKey, searchParams, filters }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const [renderersAndMarkers, setRenderersAndMarkers] = useState([]);
+  const [routeData, setRouteData] = useState(null);
+  const [activeZones, setActiveZones] = useState([]);
+  const [showInsights, setShowInsights] = useState(false);
 
   // 地図の初期化（初回のみ）
   useEffect(() => {
@@ -14,6 +18,18 @@ function MapDisplay({ searchKey, searchParams, filters }) {
       mapInstance.current = new window.google.maps.Map(mapRef.current, {
         center: { lat: 36.555, lng: 139.882 },
         zoom: 12,
+        styles: [
+          {
+            featureType: 'poi',
+            elementType: 'labels',
+            stylers: [{ visibility: 'off' }]
+          },
+          {
+            featureType: 'transit',
+            elementType: 'labels',
+            stylers: [{ visibility: 'off' }]
+          }
+        ]
       });
     }
   }, []);
@@ -75,15 +91,36 @@ function MapDisplay({ searchKey, searchParams, filters }) {
       }
       
       const activeZones = getActiveDangerZones(dangerZones, currentFilters);
+      setActiveZones(activeZones);
       const newItemsToRender = [];
 
-      // 危険地点マーカーを地図に描画
+      // 危険地点マーカーを地図に描画（改良されたアイコン）
       activeZones.forEach(zone => {
         newItemsToRender.push(new window.google.maps.Marker({
           position: zone.location,
           map: mapInstance.current,
-          title: `${zone.name} (${zone.year}/${zone.month} ${zone.hour}時)`,
-          icon: { path: window.google.maps.SymbolPath.CIRCLE, scale: 5, fillColor: '#d9534f', fillOpacity: 0.7, strokeWeight: 0 }
+          title: `⚠️ ${zone.name}\n${zone.type}事故多発地点\n(${zone.year}/${zone.month} ${zone.hour}時頃)`,
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: '#ef4444',
+            fillOpacity: 0.8,
+            strokeColor: '#ffffff',
+            strokeWeight: 2
+          },
+          zIndex: 1000
+        }));
+
+        // 危険地点の影響範囲を円で表示
+        newItemsToRender.push(new window.google.maps.Circle({
+          center: zone.location,
+          radius: zone.radius,
+          map: mapInstance.current,
+          fillColor: '#ef4444',
+          fillOpacity: 0.1,
+          strokeColor: '#ef4444',
+          strokeOpacity: 0.3,
+          strokeWeight: 1
         }));
       });
       
@@ -91,20 +128,76 @@ function MapDisplay({ searchKey, searchParams, filters }) {
       const bounds = new window.google.maps.LatLngBounds();
       
       // NAVee推奨ルート（青）を描画
-      newItemsToRender.push(new window.google.maps.DirectionsRenderer({ map: mapInstance.current, directions: directionsResult, routeIndex: naveeRouteIndex, preserveViewport: true, polylineOptions: { strokeColor: 'blue', strokeWeight: 6, zIndex: 2 }}));
+      const naveeRenderer = new window.google.maps.DirectionsRenderer({
+        map: mapInstance.current,
+        directions: directionsResult,
+        routeIndex: naveeRouteIndex,
+        preserveViewport: true,
+        polylineOptions: {
+          strokeColor: '#2563eb',
+          strokeWeight: 6,
+          zIndex: 2
+        },
+        suppressMarkers: false,
+        markerOptions: {
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: '#2563eb',
+            fillOpacity: 1,
+            strokeColor: '#ffffff',
+            strokeWeight: 2
+          }
+        }
+      });
+      newItemsToRender.push(naveeRenderer);
       bounds.union(directionsResult.routes[naveeRouteIndex].bounds);
 
       // Google推奨ルートがNAVee推奨と異なり、より危険な場合に赤で描画
       const naveeDangerCount = countPassingDangerZones(directionsResult.routes[naveeRouteIndex], activeZones);
       const googleDangerCount = countPassingDangerZones(directionsResult.routes[googleRouteIndex], activeZones);
       
+      let googleRenderer = null;
       if (naveeRouteIndex !== googleRouteIndex && googleDangerCount > naveeDangerCount) {
-        newItemsToRender.push(new window.google.maps.DirectionsRenderer({ map: mapInstance.current, directions: directionsResult, routeIndex: googleRouteIndex, preserveViewport: true, polylineOptions: { strokeColor: 'red', strokeWeight: 4, zIndex: 1, icons: [{ icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 3 }, offset: '0', repeat: '15px' }]}}));
+        googleRenderer = new window.google.maps.DirectionsRenderer({
+          map: mapInstance.current,
+          directions: directionsResult,
+          routeIndex: googleRouteIndex,
+          preserveViewport: true,
+          polylineOptions: {
+            strokeColor: '#ef4444',
+            strokeWeight: 4,
+            zIndex: 1,
+            strokeOpacity: 0.7,
+            icons: [{
+              icon: {
+                path: 'M 0,-1 0,1',
+                strokeOpacity: 1,
+                scale: 3
+              },
+              offset: '0',
+              repeat: '15px'
+            }]
+          },
+          suppressMarkers: true
+        });
+        newItemsToRender.push(googleRenderer);
         bounds.union(directionsResult.routes[googleRouteIndex].bounds);
       }
       
       mapInstance.current.fitBounds(bounds);
       setRenderersAndMarkers(newItemsToRender);
+
+      // ルートデータを保存してInsightsコンポーネントに渡す
+      setRouteData({
+        naveeRoute: directionsResult.routes[naveeRouteIndex],
+        googleRoute: googleRenderer ? directionsResult.routes[googleRouteIndex] : null,
+        naveeDangerCount,
+        googleDangerCount
+      });
+
+      // AI分析を表示
+      setShowInsights(true);
 
     } catch (error) {
       console.error("ルート検索・描画エラー:", error);
@@ -116,6 +209,8 @@ function MapDisplay({ searchKey, searchParams, filters }) {
     if (searchKey > 0) {
       // 既存の描画をクリア
       renderersAndMarkers.forEach(item => item.setMap(null));
+      setShowInsights(false);
+      setRouteData(null);
       
       if (searchParams.origin && searchParams.destination && mapInstance.current && filters) {
         fetchAndDisplayRoutes(searchParams.origin, searchParams.destination, filters);
@@ -123,7 +218,16 @@ function MapDisplay({ searchKey, searchParams, filters }) {
     }
   }, [searchKey, searchParams, filters, renderersAndMarkers, fetchAndDisplayRoutes]);
 
-  return <div ref={mapRef} className="map-container" />;
+  return (
+    <div className="map-display-container">
+      <div ref={mapRef} className="map-container" />
+      <RouteInsights 
+        routeData={routeData}
+        activeZones={activeZones}
+        isVisible={showInsights}
+      />
+    </div>
+  );
 }
 
 export default MapDisplay;

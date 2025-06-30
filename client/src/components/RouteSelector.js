@@ -1,5 +1,6 @@
 // client/src/components/RouteSelector.js
 import React, { useState } from 'react';
+import VehicleTypeSelector from './VehicleTypeSelector';
 import '../styles/RouteSelector.css';
 
 const years = [2025, 2024, 2023];
@@ -59,52 +60,86 @@ function RouteSelector({ onSearch }) {
 
   return (
     <div className="route-selector-container">
-      <h2>車両選択とルート検索</h2>
-      <div className="input-group">
-        <label htmlFor="vehicleType">車種を選択:</label>
-        <select id="vehicleType" className="select-box" value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}>
-          <option value="compact">コンパクトカー</option>
-          <option value="large">大型車（SUV/ミニバン）</option>
-          <option value="commercial">商用車（トラック）</option>
-        </select>
-      </div>
-      <div className="input-group">
-        <label htmlFor="origin">出発地:</label>
-        <input type="text" id="origin" value={origin} onChange={e => setOrigin(e.target.value)} onKeyPress={handleKeyPress} placeholder="例: 宇都宮駅" className="text-input" />
-      </div>
-      <div className="input-group">
-        <label htmlFor="destination">目的地:</label>
-        <input type="text" id="destination" value={destination} onChange={e => setDestination(e.target.value)} onKeyPress={handleKeyPress} placeholder="例: 栃木県庁" className="text-input" />
-      </div>
-      <button onClick={handleSearch} className="search-button">安全ルートを検索</button>
+      <h2>安全ルート検索</h2>
       
-      <details className="filter-details" open>
-        <summary>事故データのフィルター</summary>
+      <VehicleTypeSelector 
+        selectedType={vehicleType}
+        onTypeChange={setVehicleType}
+      />
+      
+      <div className="location-inputs">
+        <div className="input-group">
+          <label htmlFor="origin">出発地</label>
+          <input 
+            type="text" 
+            id="origin" 
+            value={origin} 
+            onChange={e => setOrigin(e.target.value)} 
+            onKeyPress={handleKeyPress} 
+            placeholder="例: 宇都宮駅" 
+            className="text-input" 
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="destination">目的地</label>
+          <input 
+            type="text" 
+            id="destination" 
+            value={destination} 
+            onChange={e => setDestination(e.target.value)} 
+            onKeyPress={handleKeyPress} 
+            placeholder="例: 栃木県庁" 
+            className="text-input" 
+          />
+        </div>
+      </div>
+      
+      <button onClick={handleSearch} className="search-button">
+        🛡️ 安全ルートを検索
+      </button>
+      
+      <details className="filter-details">
+        <summary>🔍 事故データフィルター（詳細設定）</summary>
         <div className="filter-section">
-          <h4>時間帯</h4>
+          <h4>⏰ 時間帯</h4>
           <div className="filter-grid time-grid">
             {timeSlots.map(slot => (
-              <label key={slot}>
-                <input type="checkbox" checked={timeFilters[slot]} onChange={() => handleTimeChange(slot)} />
+              <label key={slot} className="filter-checkbox">
+                <input 
+                  type="checkbox" 
+                  checked={timeFilters[slot]} 
+                  onChange={() => handleTimeChange(slot)} 
+                />
+                <span className="checkmark"></span>
                 {slot.replace('-', '時～')}時
               </label>
             ))}
           </div>
         </div>
         <div className="filter-section">
-          <h4>年月</h4>
+          <h4>📅 年月</h4>
           {years.map(year => (
             <div key={year} className="year-group">
               <h5>
-                <label>
-                  <input type="checkbox" checked={dateFilters[year].all} onChange={() => handleDateChange(year, 'all')} />
+                <label className="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    checked={dateFilters[year].all} 
+                    onChange={() => handleDateChange(year, 'all')} 
+                  />
+                  <span className="checkmark"></span>
                   {year}年
                 </label>
               </h5>
               <div className="filter-grid month-grid">
                 {months.map(month => (
-                  <label key={`${year}-${month}`}>
-                    <input type="checkbox" checked={!!dateFilters[year][month]} onChange={() => handleDateChange(year, month)} />
+                  <label key={`${year}-${month}`} className="filter-checkbox">
+                    <input 
+                      type="checkbox" 
+                      checked={!!dateFilters[year][month]} 
+                      onChange={() => handleDateChange(year, month)} 
+                    />
+                    <span className="checkmark"></span>
                     {month}月
                   </label>
                 ))}
@@ -116,4 +151,5 @@ function RouteSelector({ onSearch }) {
     </div>
   );
 }
+
 export default RouteSelector;
