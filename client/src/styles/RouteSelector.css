@@ -1,104 +1,193 @@
 /* client/src/styles/RouteSelector.css */
 .route-selector-container {
-  padding: 30px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 1px 0px rgba(255, 255, 255, 0.2) inset;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  border: 1px solid #e2e8f0;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.route-selector-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
 }
 
 .route-selector-container h2 {
-  font-size: 1.8em;
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
   margin: 0;
   color: #1e293b;
   text-align: center;
   font-weight: 700;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.route-selector-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border-radius: 2px;
 }
 
 .location-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 24px;
+  margin-top: 8px;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  position: relative;
 }
 
 .input-group label {
   font-weight: 600;
   color: #374151;
-  font-size: 0.95em;
+  font-size: 1em;
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
 }
 
 .text-input {
-  width: 100%; 
-  padding: 14px 16px; 
-  border-radius: 8px; 
-  border: 2px solid #e5e7eb;
-  box-sizing: border-box;
-  font-size: 1em;
-  background: white;
-  transition: all 0.3s ease;
+  width: 100%;
+  padding: 18px 24px;
+  border: 2px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  font-size: 1.05em;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .text-input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 
+    0 0 0 4px rgba(59, 130, 246, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+.text-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 .search-button {
   width: 100%;
-  padding: 16px 24px;
+  padding: 20px 32px;
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   font-size: 1.2em;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 8px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 
+    0 8px 25px rgba(37, 99, 235, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+.search-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.search-button:hover::before {
+  left: 100%;
 }
 
 .search-button:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 35px rgba(37, 99, 235, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
 }
 
 .search-button:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 .filter-details {
-  margin-top: 8px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
+  margin-top: 16px;
+  border: 2px solid rgba(226, 232, 240, 0.6);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-details[open] {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(59, 130, 246, 0.1);
 }
 
 .filter-details summary {
   cursor: pointer;
   font-weight: 600;
-  color: #475569;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-bottom: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
+  color: #374151;
+  padding: 20px 28px;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   list-style: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 1.05em;
+  position: relative;
 }
 
 .filter-details summary::-webkit-details-marker {
@@ -107,26 +196,33 @@
 
 .filter-details summary::after {
   content: '▼';
-  font-size: 0.8em;
+  font-size: 0.9em;
   color: #64748b;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.8);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .filter-details[open] summary::after {
   transform: rotate(180deg);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
 }
 
 .filter-details summary:hover {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-}
-
-.filter-details[open] {
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.9) 100%);
 }
 
 .filter-section {
-  padding: 20px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 28px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .filter-section:last-child {
@@ -134,37 +230,52 @@
 }
 
 .filter-section h4 {
-  margin: 0 0 16px;
-  color: #374151;
-  font-size: 1.1em;
-  font-weight: 600;
+  margin: 0 0 20px;
+  color: #1e293b;
+  font-size: 1.2em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-section h4::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 2px;
 }
 
 .filter-section h5 {
-  margin: 0 0 12px;
-  color: #4b5563;
-  font-size: 1em;
+  margin: 0 0 16px;
+  color: #475569;
+  font-size: 1.05em;
   font-weight: 600;
 }
 
 .filter-grid {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .time-grid {
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .month-grid {
-  padding-left: 20px;
-  border-left: 3px solid #e2e8f0;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  margin-top: 12px;
+  padding-left: 24px;
+  border-left: 3px solid rgba(59, 130, 246, 0.2);
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  margin-top: 16px;
 }
 
 .year-group {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 .year-group:last-child {
@@ -175,19 +286,23 @@
 .filter-checkbox {
   display: flex;
   align-items: center;
-  font-size: 0.9em;
+  font-size: 0.95em;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  backdrop-filter: blur(5px);
+  font-weight: 500;
 }
 
 .filter-checkbox:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: rgba(241, 245, 249, 0.9);
+  border-color: rgba(203, 213, 225, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .filter-checkbox input[type="checkbox"] {
@@ -195,20 +310,25 @@
 }
 
 .checkmark {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid #cbd5e1;
-  border-radius: 4px;
-  margin-right: 10px;
+  border-radius: 6px;
+  margin-right: 12px;
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .filter-checkbox input[type="checkbox"]:checked + .checkmark {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border-color: #2563eb;
+  box-shadow: 
+    0 4px 12px rgba(37, 99, 235, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  transform: scale(1.05);
 }
 
 .filter-checkbox input[type="checkbox"]:checked + .checkmark::after {
@@ -218,66 +338,93 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 0.8em;
+  font-size: 0.85em;
   font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.filter-checkbox input[type="checkbox"]:checked ~ span:not(.checkmark) {
-  color: #2563eb;
-  font-weight: 600;
+.filter-checkbox input[type="checkbox"]:checked {
+  & + .checkmark + span {
+    color: #2563eb;
+    font-weight: 600;
+  }
+}
+
+.filter-checkbox input[type="checkbox"]:checked ~ .filter-checkbox {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 1024px) {
+  .route-selector-container {
+    padding: 32px 28px;
+    gap: 28px;
+  }
 }
 
 @media (max-width: 768px) {
   .route-selector-container {
-    padding: 20px;
-    gap: 20px;
+    padding: 28px 24px;
+    gap: 24px;
+    border-radius: 20px;
   }
   
   .location-inputs {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
   
   .route-selector-container h2 {
-    font-size: 1.5em;
+    font-size: 1.6rem;
   }
   
   .search-button {
     font-size: 1.1em;
-    padding: 14px 20px;
+    padding: 18px 28px;
   }
   
   .time-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
   
   .month-grid {
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    padding-left: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    padding-left: 20px;
+  }
+  
+  .filter-section {
+    padding: 24px 20px;
   }
 }
 
 @media (max-width: 480px) {
   .route-selector-container {
-    padding: 16px;
+    padding: 24px 20px;
+    border-radius: 16px;
   }
   
   .text-input {
-    padding: 12px 14px;
-    font-size: 0.95em;
+    padding: 16px 20px;
+    font-size: 1em;
   }
   
   .search-button {
     font-size: 1em;
-    padding: 12px 18px;
+    padding: 16px 24px;
   }
   
   .filter-section {
-    padding: 16px;
+    padding: 20px 16px;
   }
   
   .time-grid,
   .month-grid {
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  
+  .filter-details summary {
+    padding: 18px 20px;
+    font-size: 1em;
   }
 }

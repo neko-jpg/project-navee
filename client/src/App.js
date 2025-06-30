@@ -29,15 +29,20 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>NAVee - 安全ルートナビゲーション</h1>
+        <h1>NAVee</h1>
+        <p className="header-subtitle">AI安全ルートナビゲーション</p>
       </header>
       <main>
-        <RouteSelector onSearch={handleSearchRoutes} />
-        <MapDisplay 
-          searchKey={searchState.searchKey}
-          searchParams={{ origin: searchState.origin, destination: searchState.destination }} 
-          filters={searchState.filters} 
-        />
+        <div className="content-container">
+          <RouteSelector onSearch={handleSearchRoutes} />
+        </div>
+        <div className="content-container">
+          <MapDisplay 
+            searchKey={searchState.searchKey}
+            searchParams={{ origin: searchState.origin, destination: searchState.destination }} 
+            filters={searchState.filters} 
+          />
+        </div>
       </main>
     </div>
   );
