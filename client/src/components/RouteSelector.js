@@ -1,96 +1,119 @@
 // client/src/components/RouteSelector.js
-import React, { useState } from 'react'; // useStateをインポート
+import React, { useState } from 'react';
+import '../styles/RouteSelector.css';
 
-// 親コンポーネントから onSearch という関数を受け取る
+const years = [2025, 2024, 2023];
+const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const timeSlots = ['0-6', '6-12', '12-18', '18-24'];
+
 function RouteSelector({ onSearch }) {
-  // 状態変数を使って入力フィールドの値を管理
-  const [origin, setOrigin] = useState(''); // 出発地
-  const [destination, setDestination] = useState(''); // 目的地
-  const [vehicleType, setVehicleType] = useState('compact'); // 車種 (初期値はコンパクトカー)
+  const [origin, setOrigin] = useState('宇都宮駅');
+  const [destination, setDestination] = useState('栃木県庁');
+  const [vehicleType, setVehicleType] = useState('compact');
+  
+  const [dateFilters, setDateFilters] = useState(() => {
+    const initialState = {};
+    years.forEach(year => {
+      initialState[year] = { all: true };
+      months.forEach(month => {
+        initialState[year][month] = true;
+      });
+    });
+    return initialState;
+  });
 
-  // ルート検索ボタンがクリックされた時のハンドラ
+  const [timeFilters, setTimeFilters] = useState({
+    '0-6': true, '6-12': true, '12-18': true, '18-24': true,
+  });
+
+  const handleDateChange = (year, month) => {
+    setDateFilters(prev => {
+      const newFilters = JSON.parse(JSON.stringify(prev));
+      if (month === 'all') {
+        const isChecked = !newFilters[year].all;
+        newFilters[year].all = isChecked;
+        months.forEach(m => { newFilters[year][m] = isChecked; });
+      } else {
+        newFilters[year][month] = !newFilters[year][month];
+        newFilters[year].all = months.every(m => newFilters[year][m]);
+      }
+      return newFilters;
+    });
+  };
+
+  const handleTimeChange = (slot) => {
+    setTimeFilters(prev => ({ ...prev, [slot]: !prev[slot] }));
+  };
+
   const handleSearch = () => {
-    // 親コンポーネントに検索情報を渡す
-    if (onSearch) {
-      onSearch(origin, destination, vehicleType);
+    if (onSearch && origin && destination) {
+      onSearch(origin, destination, vehicleType, { dates: dateFilters, times: timeFilters });
+    } else {
+      alert('出発地と目的地を入力してください。');
     }
   };
 
-  return (
-    <div className="route-selector-container" style={{
-      padding: '20px',
-      margin: '20px',
-      border: '1px solid #eee',
-      borderRadius: '8px',
-      maxWidth: '500px',
-      width: '100%',
-      backgroundColor: '#f9f9f9',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-    }}>
-      <h2 style={{ fontSize: '1.5em', marginBottom: '15px', color: '#333', textAlign: 'center' }}>車両選択とルート検索</h2>
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
 
-      <div style={{ marginBottom: '15px' }}>
-        <label htmlFor="vehicleType" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>車種を選択:</label>
-        <select
-          id="vehicleType"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', appearance: 'none', background: 'white url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.4H18.6c-5%200-9.3%203.3-11.4%207.7-2%204.4-1.2%209.5%202.4%2013.1l139.2%20139.2c2.8%202.8%206.5%204.4%2010.3%204.4s7.5-1.6%2010.3-4.4l139.2-139.2c3.6-3.6%204.3-8.7%202.3-13.1z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 10px center', backgroundSize: '12px', cursor: 'pointer' }}
-          value={vehicleType} // 状態変数と連結
-          onChange={(e) => setVehicleType(e.target.value)} // 変更時に状態を更新
-        >
+  return (
+    <div className="route-selector-container">
+      <h2>車両選択とルート検索</h2>
+      <div className="input-group">
+        <label htmlFor="vehicleType">車種を選択:</label>
+        <select id="vehicleType" className="select-box" value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}>
           <option value="compact">コンパクトカー</option>
           <option value="large">大型車（SUV/ミニバン）</option>
           <option value="commercial">商用車（トラック）</option>
         </select>
       </div>
-
-      <div style={{ marginBottom: '10px' }}>
-        <label htmlFor="origin" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>出発地:</label>
-        <input
-          type="text"
-          id="origin"
-          placeholder="例: 宇都宮駅"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-          value={origin} // 状態変数と連結
-          onChange={(e) => setOrigin(e.target.value)} // 変更時に状態を更新
-        />
+      <div className="input-group">
+        <label htmlFor="origin">出発地:</label>
+        <input type="text" id="origin" value={origin} onChange={e => setOrigin(e.target.value)} onKeyPress={handleKeyPress} placeholder="例: 宇都宮駅" className="text-input" />
       </div>
-
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="destination" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>目的地:</label>
-        <input
-          type="text"
-          id="destination"
-          placeholder="例: 栃木県庁"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-          value={destination} // 状態変数と連結
-          onChange={(e) => setDestination(e.target.value)} // 変更時に状態を更新
-        />
+      <div className="input-group">
+        <label htmlFor="destination">目的地:</label>
+        <input type="text" id="destination" value={destination} onChange={e => setDestination(e.target.value)} onKeyPress={handleKeyPress} placeholder="例: 栃木県庁" className="text-input" />
       </div>
-
-      <button
-        style={{
-          width: '100%',
-          padding: '12px 20px',
-          backgroundColor: '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          fontSize: '1.1em',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          transition: 'background-color 0.3s ease, transform 0.1s ease',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }}
-        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
-        onMouseDown={(e) => e.currentTarget.style.transform = 'translateY(1px)'}
-        onMouseUp={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-        onClick={handleSearch} // ボタンクリック時にhandleSearch関数を実行
-      >
-        ルート検索
-      </button>
+      <button onClick={handleSearch} className="search-button">安全ルートを検索</button>
+      
+      <details className="filter-details" open>
+        <summary>事故データのフィルター</summary>
+        <div className="filter-section">
+          <h4>時間帯</h4>
+          <div className="filter-grid time-grid">
+            {timeSlots.map(slot => (
+              <label key={slot}>
+                <input type="checkbox" checked={timeFilters[slot]} onChange={() => handleTimeChange(slot)} />
+                {slot.replace('-', '時～')}時
+              </label>
+            ))}
+          </div>
+        </div>
+        <div className="filter-section">
+          <h4>年月</h4>
+          {years.map(year => (
+            <div key={year} className="year-group">
+              <h5>
+                <label>
+                  <input type="checkbox" checked={dateFilters[year].all} onChange={() => handleDateChange(year, 'all')} />
+                  {year}年
+                </label>
+              </h5>
+              <div className="filter-grid month-grid">
+                {months.map(month => (
+                  <label key={`${year}-${month}`}>
+                    <input type="checkbox" checked={!!dateFilters[year][month]} onChange={() => handleDateChange(year, month)} />
+                    {month}月
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
     </div>
   );
 }
-
 export default RouteSelector;

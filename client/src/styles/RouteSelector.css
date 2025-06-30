@@ -1,0 +1,119 @@
+/* client/src/styles/RouteSelector.css */
+.route-selector-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.route-selector-container h2 {
+  font-size: 1.5em;
+  margin: 0;
+  color: #333;
+  text-align: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-group label {
+  font-weight: bold;
+}
+
+.text-input,
+.select-box {
+  width: 100%; 
+  padding: 10px; 
+  border-radius: 4px; 
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+.select-box {
+  appearance: none;
+  background: white url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.4H18.6c-5%200-9.3%203.3-11.4%207.7-2%204.4-1.2%209.5%202.4%2013.1l139.2%20139.2c2.8%202.8%206.5%204.4%2010.3%204.4s7.5-1.6%2010.3-4.4l139.2-139.2c3.6-3.6%204.3-8.7%202.3-13.1z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 10px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.search-button {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+.filter-details {
+  margin-top: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+}
+
+.filter-details summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #0056b3;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  list-style: none; /* マーカーを消す */
+  display: inline-block;
+}
+
+.filter-details summary::-webkit-details-marker {
+  display: none; /* Chromeのマーカーを消す */
+}
+
+.filter-details[open] > summary {
+  background-color: #e9ecef;
+}
+
+.filter-section {
+  margin-top: 15px;
+}
+.filter-section h4, 
+.filter-section h5 {
+  margin: 0 0 10px;
+  color: #343a40;
+}
+
+.filter-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.time-grid {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+}
+
+.month-grid {
+  padding-left: 15px;
+  border-left: 2px solid #e9ecef;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+}
+
+.filter-grid label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  gap: 5px;
+  cursor: pointer;
+  padding: 2px;
+}

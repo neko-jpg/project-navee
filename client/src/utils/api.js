@@ -1,38 +1,39 @@
-    // client/src/utils/api.js
-    // Google Maps APIとの連携や、バックエンドAPIへのリクエストを行うユーティリティ関数
+// client/src/utils/api.js
 
-    // DirectionsService を利用するように変更
-    export const getDirections = async (origin, destination) => {
-      // APIキーはwindow.googleMapsApiKeyから取得（public/index.htmlで設定済み）
-      // ただし、DirectionsServiceはAPIキーを直接引数で渡す必要はない
-      // APIキーは <script> タグの URL パラメータで渡されているため、SDKが内部で処理する
+/**
+ * DirectionsServiceを呼び出してルート情報を取得する
+ * @param {string} origin - 出発地
+ * @param {string} destination - 目的地
+ * @param {google.maps.DirectionsWaypoint[]} [waypoints] - 経由地の配列（オプション）
+ * @returns {Promise<google.maps.DirectionsResult>}
+ */
+export const getDirections = async (origin, destination, waypoints = []) => {
+  if (!window.google || !window.google.maps || !window.google.maps.DirectionsService) {
+    console.error("Google Maps DirectionsService is not loaded.");
+    throw new Error("Google Maps API not fully loaded or DirectionsService unavailable.");
+  }
 
-      if (!window.google || !window.google.maps || !window.google.maps.DirectionsService) {
-        console.error("Google Maps DirectionsService is not loaded.");
-        // APIがまだ読み込まれていない、またはDirectionsServiceが利用できない場合はエラーをスロー
-        throw new Error("Google Maps API not fully loaded or DirectionsService unavailable.");
+  const directionsService = new window.google.maps.DirectionsService();
+
+  const request = {
+    origin: origin,
+    destination: destination,
+    waypoints: waypoints,
+    optimizeWaypoints: true, // 経由地を最適化
+    travelMode: window.google.maps.TravelMode.DRIVING,
+    provideRouteAlternatives: false, // 今回は個別にリクエストするのでfalseでOK
+  };
+
+  console.log("Calling DirectionsService with request:", request);
+
+  return new Promise((resolve, reject) => {
+    directionsService.route(request, (result, status) => {
+      if (status === window.google.maps.DirectionsStatus.OK) {
+        resolve(result);
+      } else {
+        console.error(`DirectionsService failed due to: ${status}`, {origin, destination, waypoints});
+        reject(new Error(`DirectionsService failed with status: ${status}`));
       }
-
-      const directionsService = new window.google.maps.DirectionsService();
-
-      // Directions API へのリクエストパラメータ
-      const request = {
-        origin: origin,       // 出発地 (文字列または LatLng オブジェクト)
-        destination: destination, // 目的地 (文字列または LatLng オブジェクト)
-        travelMode: window.google.maps.TravelMode.DRIVING, // 車での移動
-        provideRouteAlternatives: true, // 複数のルート候補を要求
-      };
-
-      console.log("Calling DirectionsService with request:", request);
-
-      return new Promise((resolve, reject) => {
-        directionsService.route(request, (result, status) => {
-          if (status === window.google.maps.DirectionsStatus.OK) {
-            resolve(result); // 結果を解決
-          } else {
-            console.error("DirectionsService failed due to:", status);
-            reject(new Error(`DirectionsService failed with status: ${status}`)); // エラーを拒否
-          }
-        });
-      });
-    };
+    });
+  });
+};
